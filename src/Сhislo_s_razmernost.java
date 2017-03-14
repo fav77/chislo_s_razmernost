@@ -2,21 +2,21 @@ import java.util.ArrayList;
 
 public class Сhislo_s_razmernost {
 
-    private int mant;
-    private int pokaz;
+    private double mant;
+    private double pokaz;
     private  ArrayList<String> chisl;
     private  ArrayList<String> znam;
 
-    public Сhislo_s_razmernost(int mant, int pokaz, ArrayList<String> chisl, ArrayList<String> znam ) {
+    public Сhislo_s_razmernost(double mant, double pokaz, ArrayList<String> chisl, ArrayList<String> znam ) {
         this.mant = mant;     // Мантиса числа
         this.pokaz = pokaz;   // Показатель степени
         this.chisl = chisl;   // Числитель размерности
         this.znam = znam;     // Знаменатель размерности
     }
-    public int getMant(){
+    public double getMant(){
         return mant;
     }
-    public int getPokaz(){
+    public double getPokaz(){
         return pokaz;
     }
     public ArrayList<String> getZnam(){
@@ -31,7 +31,7 @@ public class Сhislo_s_razmernost {
      public void setPokaz(int pokaz){
          this.pokaz = pokaz;
      }
-    private int stepen(int a,int b){
+    private int stepen(double a,double b){
         int result = 1;
         for (int i = 0; i<b; i++) {
             result *= a;
@@ -40,7 +40,7 @@ public class Сhislo_s_razmernost {
     }
     private Сhislo_s_razmernost peren(Сhislo_s_razmernost m){ // Перенос десятки из мантисы в показатель числа
             int count = 0;
-            int newMant = m.mant;
+            double newMant = m.mant;
         while (newMant % 10 == 0 ){
             count ++;
             newMant /= 10;
