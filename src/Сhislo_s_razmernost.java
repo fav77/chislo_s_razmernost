@@ -1,13 +1,13 @@
-import java.util.ArrayList;
+import java.util.*;
 
 public class Сhislo_s_razmernost {
 
     private double mant;
     private double pokaz;
-    private  ArrayList<String> chisl;
-    private  ArrayList<String> znam;
+    private List<String> chisl;
+    private List<String> znam;
 
-    public Сhislo_s_razmernost(double mant, double pokaz, ArrayList<String> chisl, ArrayList<String> znam ) {
+    public Сhislo_s_razmernost(double mant, double pokaz, List<String> chisl, List<String> znam ) {
         this.mant = mant;     // Мантиса числа
         this.pokaz = pokaz;   // Показатель степени
         this.chisl = chisl;   // Числитель размерности
@@ -19,10 +19,10 @@ public class Сhislo_s_razmernost {
     public double getPokaz(){
         return pokaz;
     }
-    public ArrayList<String> getZnam(){
+    public List<String> getZnam(){
         return znam;
     }
-    public ArrayList<String> getChisl(){
+    public List<String> getChisl(){
         return chisl;
     }
      public void setMant(int mant){
@@ -31,14 +31,14 @@ public class Сhislo_s_razmernost {
      public void setPokaz(int pokaz){
          this.pokaz = pokaz;
      }
-    private int stepen(double a,double b){
+    public int stepen(double a,double b){
         int result = 1;
         for (int i = 0; i<b; i++) {
             result *= a;
         }
         return result;
     }
-    private Сhislo_s_razmernost peren(Сhislo_s_razmernost m){ // Перенос десятки из мантисы в показатель числа
+    public Сhislo_s_razmernost peren(Сhislo_s_razmernost m){ // Перенос десятки из мантисы в показатель числа
             int count = 0;
             double newMant = m.mant;
         while (newMant % 10 == 0 ){
@@ -48,11 +48,22 @@ public class Сhislo_s_razmernost {
         return new Сhislo_s_razmernost(newMant, pokaz + count, this.chisl, this.znam );
     }
 
+    public Сhislo_s_razmernost perendel(Сhislo_s_razmernost m){
+        int count = 0;
+        double newMant = m.mant;
+        while (newMant < 1){
+            count ++;
+            newMant *= 10;
+        }
+        return new Сhislo_s_razmernost(newMant, pokaz - count, this.chisl, this.znam);
+    }
 
-    private Сhislo_s_razmernost sokr (Сhislo_s_razmernost n){ // Сокращение числителя и знаменателя в размерности
+
+    public Сhislo_s_razmernost sokr (Сhislo_s_razmernost n){ // Сокращение числителя и знаменателя в размерности
         if (n.chisl.isEmpty() || n.znam.isEmpty()){
             return this;
         }
+
         else {
             for (String ellemChisl: chisl){
                 for (String ellemZnam: znam){
@@ -66,21 +77,26 @@ public class Сhislo_s_razmernost {
         return this;
     }
 
+    public Сhislo_s_razmernost sorted (){
+        Collections.sort(this.chisl);
+        Collections.sort(this.znam) ;
+        return this;
+    }
 
 
-    public Сhislo_s_razmernost slozh(Сhislo_s_razmernost other) throws IllegalArgumentException { //Сложение
-        if ((chisl == other.chisl) && (znam == other.znam)) {
-            Сhislo_s_razmernost result = new Сhislo_s_razmernost(mant, pokaz, chisl, znam);
+    public Сhislo_s_razmernost slozh(Сhislo_s_razmernost other) throws IllegalArgumentException {//Сложение
+        other.sorted();
+        if (((chisl.equals(other.chisl) && (znam.equals(other.znam))))){
             if (pokaz == other.pokaz) {
-                result = new Сhislo_s_razmernost(mant + other.mant, pokaz, chisl, znam);
+                Сhislo_s_razmernost  result = new Сhislo_s_razmernost(mant + other.mant, pokaz, chisl, znam);
                 return peren(result);
             }
             if (pokaz > other.pokaz) {
-                result = new Сhislo_s_razmernost(mant * stepen(10,pokaz - other.pokaz) + other.mant, other.pokaz, chisl, znam);
+                Сhislo_s_razmernost result = new Сhislo_s_razmernost(mant * stepen(10,pokaz - other.pokaz) + other.mant, other.pokaz, chisl, znam);
                 return peren(result);
             }
             if (pokaz < other.pokaz) {
-                result = new Сhislo_s_razmernost(other.mant * stepen(10,other.pokaz - pokaz) + mant, pokaz, chisl, znam);
+                Сhislo_s_razmernost result = new Сhislo_s_razmernost(other.mant * stepen(10,other.pokaz - pokaz) + mant, pokaz, chisl, znam);
                 return peren(result);
             }
 
@@ -103,12 +119,21 @@ public class Сhislo_s_razmernost {
          newZnam.addAll(znam);
          newZnam.addAll(other.znam);
          Сhislo_s_razmernost result = new Сhislo_s_razmernost(mant * other.mant, pokaz + other.pokaz, newChisl, newZnam);
+         result.sorted();
          return peren(sokr(result));
      }
 
 
      public Сhislo_s_razmernost del(Сhislo_s_razmernost other) { // Деление
-         return this.ymn(new Сhislo_s_razmernost(other.mant, -other.pokaz, other.chisl, other.znam ));
+         ArrayList<String> newChisl = new ArrayList<String>();
+         newChisl.addAll(chisl);
+         newChisl.addAll(other.chisl);
+         ArrayList<String> newZnam = new ArrayList<String>();
+         newZnam.addAll(znam);
+         newZnam.addAll(other.znam);
+         Сhislo_s_razmernost result = new Сhislo_s_razmernost(mant / other.mant, pokaz - other.pokaz, newChisl, newZnam );
+         result.sorted();
+         return peren(sokr(result));
      }
 
      public String sravn(Сhislo_s_razmernost other) {
@@ -121,4 +146,14 @@ public class Сhislo_s_razmernost {
          }
          else return "Числа равны";
      }
+
+    @Override
+    public boolean equals(Object object) {
+       return  (this.mant == mant && this.znam == znam && this.chisl.toString() == chisl.toString() && this.znam.toString() == znam.toString());
+    }
+
+    public boolean equals(List<String> n) {
+        return  (this.toString() == n.toString());
+    }
+
 }
